@@ -4,6 +4,9 @@ import express from "express";
 import bodyParser from "body-parser";
 
 import "dotenv/config";
+
+import fs from "node:fs";
+
 import { test } from "uvu";
 import { dirname } from "path";
 

@@ -21,7 +21,7 @@ const trackInfoModel = sequelize.define("trackInfoModel", {
   },
   trackingNumber: {
     type: DataTypes.INTEGER,
-    unique: true,
+    //unique: true,
     allowNull: false,
   },
   from: {
