@@ -1,1 +1,2 @@
-A shipping tracking webApp
+#A shipping tracking webApp
+Using Sequelize not sql
