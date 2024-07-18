@@ -14,14 +14,14 @@ const sequelize = new Sequelize(
 //tracking info for admin and user track info queries
 const trackInfoModel = sequelize.define("trackInfoModel", {
   id: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.BIGINT,
     autoIncrement: true,
     primaryKey: true,
     allowNull: false,
   },
   trackingNumber: {
     type: DataTypes.INTEGER,
-    //unique: true,
+    unique: true,
     allowNull: false,
   },
   from: {
@@ -38,7 +38,56 @@ const trackInfoModel = sequelize.define("trackInfoModel", {
   },
 });
 
-await sequelize.sync();
+//homepage big 5 images to auto slide
+const homePageBigImagesModel = sequelize.define("homePageBigImagesModel", {
+  id: {
+    type: DataTypes.INTEGER,
+    autoIncrement: true,
+    primaryKey: true,
+    allowNull: false,
+  },
+  bigImagesUrlOnCloudinary: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+});
+
+//homepage testimonials
+const homePageTestimonialModel = sequelize.define("homePageTestimonialsModel", {
+  id: {
+    type: DataTypes.INTEGER,
+    autoIncrement: true,
+    primaryKey: true,
+    allowNull: false,
+  },
+  testimonialText: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  testimonialImageUrl: {
+    type: DataTypes.STRING,
+  },
+});
+
+//homepage News, image that flashing
+
+const homePageNewsModel = sequelize.define("homePageNewsModel", {
+  id: {
+    type: DataTypes.INTEGER,
+    autoIncrement: true,
+    primaryKey: true,
+    allowNull: false,
+  },
+  newsText: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  newsImageUrl: {
+    type: DataTypes.STRING,
+  },
+});
+
+await sequelize.sync({ alter: true });
 //return trackInfo;
 
 //homepage queries
@@ -101,4 +150,9 @@ const homepageModelFlashingNews = sequelize.define(
 
 */
 //try to export everything as one name then call it them from the other end
-export { trackInfoModel };
+export {
+  trackInfoModel,
+  homePageNewsModel,
+  homePageTestimonialModel,
+  homePageBigImagesModel,
+};
