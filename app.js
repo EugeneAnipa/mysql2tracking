@@ -1,5 +1,5 @@
 import cors from "cors";
-import axios from "axios";
+import axios from "axios"; // not used
 import express from "express";
 import bodyParser from "body-parser";
 

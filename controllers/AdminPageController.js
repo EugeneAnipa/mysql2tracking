@@ -7,7 +7,7 @@ import {
 import cloudinary from "../middleware/trackingAppmiddleware.js";
 import multer from "multer";
 import { test } from "uvu";
-
+import fs from "node:fs"; //just for test to delete
 const upload = multer();
 /*
 var trackingNumberGen = Math.floor(
@@ -114,7 +114,14 @@ const searchUserTracKInfo = async function (req, res) {
 
 /**            HOMEPAGE */
 //const adminHhomePageBigImages = ,think calling the upload rather in the function than the begiining,or declare it as a variable then you call it
+
+//read docs for multer before the frontend form for this, it requires enctype="multipart/form-data"
 const adminHhomePageBigImages = async function (req, res) {
+  console.log(upload);
+  console.log(req.file.buffer);
+  // var newTest = req.file.buffer;
+  var newTest = req.file.buffer;
+  console.log(newTest);
   console.log(req.file);
   //console.log(req.file.buffer);
   try {
@@ -122,27 +129,31 @@ const adminHhomePageBigImages = async function (req, res) {
 
     //console.log(req.file);
     // so with the req.file, read docs , on how to set it as a variable
-
-    cloudinary.uploader
+    const bigImagesToCloudinary = await cloudinary.uploader
       .upload_stream(
         {
           resource_type: "image",
           asset_folder: "trackApp/homepage",
           //public_id: req.user + "_" + "bigImage",
-          overwrite: true,
+          //overwrite: true,
           unique_filename: true,
         },
         async function (error, result) {
           console.log(error);
           console.log(result);
           //sequelize insert Url
-          await homePageBigImagesModel.create({
+          /* await homePageBigImagesModel.create({
             homePageBigUrlOnCloudinary: result.secure_url,
-          });
+          });     */
         }
       )
-      .end(req.file.buffer);
+      .end(newTest);
 
+    bigImagesToCloudinary;
+    const bigImageUrlSendDB = await homePageBigImagesModel.create({
+      homePageBigUrlOnCloudinary: bigImagesToCloudinary.secure_url,
+    });
+    bigImageUrlSendDB;
     res.send("done");
   } catch (err) {
     console.log(err);
@@ -156,7 +167,7 @@ const adminHomepageTestimonials = async function (req, res) {
 
   const testImage = req.file(upload.single("testimonialImage"));
   try {
-    cloudinary.uploader
+    const testimonialsSendCloudinary = await cloudinary.uploader
       .upload_stream(
         {
           resource_type: "image",
@@ -169,13 +180,22 @@ const adminHomepageTestimonials = async function (req, res) {
           console.log(error);
           console.log(result);
           //sequelize insert Url
+
+          /*
           await homePageBigImagesModel.create({
             testimonialImageUrl: testImage,
             testimonialText: testText,
-          });
+          });       */
         }
       )
       .end(req.file.buffer);
+
+    testimonialsSendCloudinary;
+    const testimonialsUrlSendDB = await homePageBigImagesModel.create({
+      testimonialImageUrl: testimonialsSendCloudinary.secure_url,
+      testimonialText: testText,
+    });
+    testimonialsUrlSendDB;
   } catch (err) {
     console.log(err);
   }
@@ -187,7 +207,7 @@ const adminHomepageNews = async function (req, res) {
 
   const newsImage = req.file(upload.single("newsImages"));
   try {
-    cloudinary.uploader
+    const newsImageCloudinary = await cloudinary.uploader
       .upload_stream(
         {
           resource_type: "image",
@@ -200,13 +220,23 @@ const adminHomepageNews = async function (req, res) {
           console.log(error);
           console.log(result);
           //sequelize insert Url
+          /*
           await homePageNews.create({
             newsImageUrl: newsImage,
             newsText: newsText,
           });
+          */
         }
       )
       .end(req.file.buffer);
+
+    newsImageCloudinary;
+    const newsImageUrlDb = await homePageNews.create({
+      newsImageUrl: newsImage,
+      newsText: newsText,
+    });
+
+    newsImageUrlDb;
   } catch (err) {
     console.log(err);
   }
