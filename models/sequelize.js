@@ -14,7 +14,7 @@ const sequelize = new Sequelize(
 //tracking info for admin and user track info queries
 const trackInfoModel = sequelize.define("trackInfoModel", {
   id: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.INTEGER.UNSIGNED,
     autoIncrement: true,
     primaryKey: true,
     allowNull: false,
@@ -87,7 +87,7 @@ const homePageNewsModel = sequelize.define("homePageNewsModel", {
   },
 });
 
-await sequelize.sync();
+await sequelize.sync({ alter: true });
 //return trackInfo;
 
 //homepage queries

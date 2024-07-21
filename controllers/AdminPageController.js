@@ -8,7 +8,10 @@ import cloudinary from "../middleware/trackingAppmiddleware.js";
 import multer from "multer";
 import { test } from "uvu";
 import fs from "node:fs"; //just for test to delete
+import { randomInt } from "mathjs";
+
 const upload = multer();
+
 /*
 var trackingNumberGen = Math.floor(
   Math.random() * (9999999999 - 1000000000) + 1000000000
@@ -17,14 +20,17 @@ var trackingNumberGen = Math.floor(
 
 //the random number generator function itself has a problem
 //it maybe how you created the fxn post, check the callings
+/*
 const trackingNumberGen = () => {
   return Math.floor(Math.random() * (9999999999 - 1000000000) + 1000000000);
 };
+*/
 
+const trackingNumberGen = randomInt(1000000000, 9999999999);
 const postCreateUserTrackInfo = async function (req, res) {
   try {
-    var trackNoInsert = trackingNumberGen();
-
+    var trackNoInsert = trackingNumberGen;
+    console.log(trackingNumberGen);
     var fromBody = req.body.from;
     var locationBody = req.body.location;
     var destinationBody = req.body.destination;
@@ -35,7 +41,7 @@ const postCreateUserTrackInfo = async function (req, res) {
       location: locationBody,
       destination: destinationBody,
     });
-    postTrackInfo();
+    postTrackInfo;
     res.send("sent");
   } catch (err) {
     console.log(err);
@@ -118,17 +124,12 @@ const searchUserTracKInfo = async function (req, res) {
 //read docs for multer before the frontend form for this, it requires enctype="multipart/form-data"
 const adminHhomePageBigImages = async function (req, res) {
   console.log(upload);
-  console.log(req.file.buffer);
-  // var newTest = req.file.buffer;
+
   var newTest = req.file.buffer;
   console.log(newTest);
   console.log(req.file);
-  //console.log(req.file.buffer);
-  try {
-    // Upload an image
 
-    //console.log(req.file);
-    // so with the req.file, read docs , on how to set it as a variable
+  try {
     const bigImagesToCloudinary = await cloudinary.uploader
       .upload_stream(
         {
@@ -142,14 +143,16 @@ const adminHhomePageBigImages = async function (req, res) {
           console.log(error);
           console.log(result);
           //sequelize insert Url
-          /* await homePageBigImagesModel.create({
+          /*  await homePageBigImagesModel.create({
             homePageBigUrlOnCloudinary: result.secure_url,
-          });     */
+          });  
+          */
         }
       )
       .end(newTest);
 
     bigImagesToCloudinary;
+    console.log(bigImagesToCloudinary);
     const bigImageUrlSendDB = await homePageBigImagesModel.create({
       homePageBigUrlOnCloudinary: bigImagesToCloudinary.secure_url,
     });
@@ -179,13 +182,6 @@ const adminHomepageTestimonials = async function (req, res) {
         async function (error, result) {
           console.log(error);
           console.log(result);
-          //sequelize insert Url
-
-          /*
-          await homePageBigImagesModel.create({
-            testimonialImageUrl: testImage,
-            testimonialText: testText,
-          });       */
         }
       )
       .end(req.file.buffer);
@@ -219,13 +215,6 @@ const adminHomepageNews = async function (req, res) {
         async function (error, result) {
           console.log(error);
           console.log(result);
-          //sequelize insert Url
-          /*
-          await homePageNews.create({
-            newsImageUrl: newsImage,
-            newsText: newsText,
-          });
-          */
         }
       )
       .end(req.file.buffer);
@@ -244,21 +233,212 @@ const adminHomepageNews = async function (req, res) {
 
 //admin Homepage crud below ,it will display before crud
 
-//getting the homepage from above for the admin side
+// delete big image, delete news , upadate news, delete testimonials, update testimonial
 
-const getHomePage = async function (req, res) {
+//delete big image
+const deleteHomeBigImage = async function (req, res) {
+  const value = req.params.id;
   try {
-    const bigImages = await homePageBigImagesModel.findAll();
+    const [selectID] = await homePageBigImagesModel.findByPk(value);
+    [selectID] = selectID.bigImagesUrlOnCloudinary;
 
-    const testimonials = await homePageTestimonialModel.findAll();
-    const news = await homePageNewsModel.findAll();
-    res.send("<td>bigImages</td>, <td>testimonials</td>, <td>news</td>");
+    const cloudDelete = cloudinary.uploader
+      .destroy(selectID, { asset_folder: "trackApp/homepage" })
+      .then((result) => console.log(result));
+
+    cloudDelete;
+
+    const deleteUrl = await homePageBigImagesModel.destroy({
+      where: {
+        id: value,
+      },
+    });
+    deleteUrl;
   } catch (err) {
     console.log(err);
   }
 };
 
-/**            HOMEPAGE */
+//delete news
+
+const deleteNews = async function (req, res) {
+  const value = req.params.id;
+
+  const [selectID] = await homePageNewsModel.findByPk(value);
+  [selectID] = selectID.newsImageUrl;
+  try {
+    const cloudDelete = cloudinary.uploader
+      .destroy(selectID, { asset_folder: "trackApp/homepage" })
+      .then((result) => console.log(result));
+
+    cloudDelete;
+
+    const deleteUrl = await homePageNewsModel.destroy({
+      where: {
+        id: value,
+      },
+    });
+    deleteUrl;
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+//delete testimonials
+const deleteTestimonials = async function (req, res) {
+  const value = req.params.id;
+  try {
+    const [selectID] = await homePageTestimonialModel.findByPk(value);
+    [selectID] = selectID.testimonialImageUrl;
+
+    const cloudDelete = cloudinary.uploader
+      .destroy(selectID, { asset_folder: "trackApp/homepage" })
+      .then((result) => console.log(result));
+
+    cloudDelete;
+
+    const deleteUrl = await homePageTestimonialModel.destroy({
+      where: {
+        id: value,
+      },
+    });
+    deleteUrl;
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+//upadate news
+
+const updateNews = async function (req, res) {
+  const value = req.params.id;
+  const newsText = req.body.newsText;
+
+  const newsImage = req.file(upload.single("newsImages"));
+  try {
+    //const textNewsImage = req.file;
+
+    if (req.file == null) {
+      const updateNews = await homePageNewsModel.update(
+        {
+          newsText: newsText,
+        },
+        {
+          where: {
+            id: value,
+          },
+        }
+      );
+    } else if (!(req.file == null)) {
+      const findUrl = await homePageNewsModel.findOne(value);
+      findUrl = findUrl.newsImageUrl;
+
+      const cloudDelete = cloudinary.uploader
+        .destroy(findUrl, { asset_folder: "trackApp/homepage" })
+        .then((result) => console.log(result));
+
+      cloudDelete;
+
+      const newsImageCloudinary = await cloudinary.uploader
+        .upload_stream(
+          {
+            resource_type: "image",
+            asset_folder: "trackApp/homepage",
+            //public_id: req.user + "_" + "bigImage",
+            overwrite: true,
+            unique_filename: true,
+          },
+          async function (error, result) {
+            console.log(error);
+            console.log(result);
+          }
+        )
+        .end(newsImage.buffer);
+
+      newsImageCloudinary;
+
+      const updateNews = await homePageNewsModel.update(
+        {
+          newsText: newsText,
+          newsImageUrl: newsImageCloudinary.secure_url,
+        },
+        {
+          where: {
+            id: value,
+          },
+        }
+      );
+    }
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+//update testimonial
+
+const updateTestimonial = async function (req, res) {
+  const value = req.params.id;
+  const testimonialText = req.body.testimonialText;
+
+  const testimonialImage = req.file(upload.single("testimonialImages"));
+  try {
+    //const textNewsImage = req.file;
+
+    if (req.file == null) {
+      const updateTest = await homePageTestimonialModel.update(
+        {
+          testimonialText: testimonialText,
+        },
+        {
+          where: {
+            id: value,
+          },
+        }
+      );
+    } else if (!(req.file == null)) {
+      const findUrl = await homePageTestimonialModel.findOne(value);
+      findUrl = findUrl.testimonialImageUrl;
+
+      const cloudDelete = cloudinary.uploader
+        .destroy(findUrl, { asset_folder: "trackApp/homepage" })
+        .then((result) => console.log(result));
+
+      cloudDelete;
+
+      const testimoImageCloudinary = await cloudinary.uploader
+        .upload_stream(
+          {
+            resource_type: "image",
+            asset_folder: "trackApp/homepage",
+            //public_id: req.user + "_" + "bigImage",
+            overwrite: true,
+            unique_filename: true,
+          },
+          async function (error, result) {
+            console.log(error);
+            console.log(result);
+          }
+        )
+        .end(testimonialImage.buffer);
+
+      testimoImageCloudinary;
+
+      const updateTest = await homePageTestimonialModel.update(
+        {
+          testimonialText: testimonialText,
+          newsImageUrl: testimoImageCloudinary.secure_url,
+        },
+        {
+          where: {
+            id: value,
+          },
+        }
+      );
+    }
+  } catch (err) {
+    console.log(err);
+  }
+};
 
 /**            ABOUT  */
 
@@ -268,8 +448,22 @@ const getHomePage = async function (req, res) {
 
 /**            CONTACT */
 
-/** There must be a big function to display all pages content on the admin side,
- *which will have the crud fxn */
+//getting the homepage from above for the admin side
+
+const getHomePage = async function (req, res) {
+  try {
+    const allTrackingInfo = await trackInfoModel.findAll();
+    const bigImages = await homePageBigImagesModel.findAll();
+
+    const testimonials = await homePageTestimonialModel.findAll();
+    const news = await homePageNewsModel.findAll();
+    res.send(bigImages, testimonials, news, allTrackingInfo);
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+/**            HOMEPAGE */
 
 console.log(upload);
 export {
@@ -280,4 +474,12 @@ export {
   updateUserTrackInfo,
   adminHhomePageBigImages,
   upload,
+  getHomePage,
+  adminHomepageTestimonials,
+  adminHomepageNews,
+  deleteHomeBigImage,
+  deleteNews,
+  deleteTestimonials,
+  updateNews,
+  updateTestimonial,
 };
