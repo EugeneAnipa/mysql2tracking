@@ -39,6 +39,7 @@ const trackInfoModel = sequelize.define("trackInfoModel", {
 });
 
 //homepage big 5 images to auto slide
+//have to recreate the table, the columns needs to be set
 const homePageBigImagesModel = sequelize.define("homePageBigImagesModel", {
   id: {
     type: DataTypes.INTEGER,
@@ -53,6 +54,7 @@ const homePageBigImagesModel = sequelize.define("homePageBigImagesModel", {
 });
 
 //homepage testimonials
+//have to recreate the table, the columns needs to be set
 const homePageTestimonialModel = sequelize.define("homePageTestimonialsModel", {
   id: {
     type: DataTypes.INTEGER,
@@ -70,6 +72,7 @@ const homePageTestimonialModel = sequelize.define("homePageTestimonialsModel", {
 });
 
 //homepage News, image that flashing
+//have to recreate the table, the columns needs to be set
 
 const homePageNewsModel = sequelize.define("homePageNewsModel", {
   id: {
@@ -83,6 +86,45 @@ const homePageNewsModel = sequelize.define("homePageNewsModel", {
     allowNull: false,
   },
   newsImageUrl: {
+    type: DataTypes.STRING,
+  },
+});
+
+//aboutpage table
+const aboutPageModel = sequelize.define("aboutpage", {
+  id: {
+    type: DataTypes.INTEGER,
+    autoIncrement: false,
+    primaryKey: true,
+    allowNull: false,
+  },
+  aboutText: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    defaultValue:
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+  },
+});
+
+//contact table
+
+const contactPageModel = sequelize.define("contactModel", {
+  id: {
+    type: DataTypes.INTEGER,
+    autoIncrement: true,
+    primaryKey: true,
+    allowNull: false,
+  },
+  name: {
+    type: DataTypes.STRING,
+  },
+  phoneNumber: {
+    type: DataTypes.INTEGER,
+  },
+  email: {
+    type: DataTypes.STRING,
+  },
+  message: {
     type: DataTypes.STRING,
   },
 });
@@ -155,4 +197,6 @@ export {
   homePageNewsModel,
   homePageTestimonialModel,
   homePageBigImagesModel,
+  contactPageModel,
+  aboutPageModel,
 };

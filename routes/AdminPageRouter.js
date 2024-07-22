@@ -1,4 +1,3 @@
-import express from "express";
 import { Router } from "express";
 
 import {
@@ -17,6 +16,10 @@ import {
   deleteTestimonials,
   updateNews,
   updateTestimonial,
+  aboutpageGet,
+  aboutPageUpdate,
+  contactGet,
+  contactDelete,
 } from "../controllers/AdminPageController.js";
 
 const userTrackrouter = Router();
@@ -43,4 +46,8 @@ userTrackrouter.delete("/:id", deleteTestimonials);
 
 userTrackrouter.patch("/:id", updateNews);
 userTrackrouter.patch("/:id", updateTestimonial);
+userTrackrouter.get("/", aboutpageGet);
+userTrackrouter.update("/", aboutPageUpdate);
+userTrackrouter.get("/", contactGet);
+userTrackrouter.delete("/:id", contactDelete);
 export { userTrackrouter };

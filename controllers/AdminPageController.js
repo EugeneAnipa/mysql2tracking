@@ -3,6 +3,8 @@ import {
   homePageBigImagesModel,
   homePageTestimonialModel,
   homePageNewsModel,
+  aboutPageModel,
+  contactPageModel,
 } from "../models/sequelize.js";
 import cloudinary from "../middleware/trackingAppmiddleware.js";
 import multer from "multer";
@@ -122,6 +124,8 @@ const searchUserTracKInfo = async function (req, res) {
 //const adminHhomePageBigImages = ,think calling the upload rather in the function than the begiining,or declare it as a variable then you call it
 
 //read docs for multer before the frontend form for this, it requires enctype="multipart/form-data"
+
+//since the tables in the db columns values will be set, you need the upadate fxns here
 const adminHhomePageBigImages = async function (req, res) {
   console.log(upload);
 
@@ -165,6 +169,8 @@ const adminHhomePageBigImages = async function (req, res) {
 
 //testimonials
 //const adminHomepageTestimonials =
+
+//since the tables in the db columns values will be set, you need the upadate fxns here
 const adminHomepageTestimonials = async function (req, res) {
   const testText = req.body.testText;
 
@@ -198,6 +204,7 @@ const adminHomepageTestimonials = async function (req, res) {
 };
 
 //news,images that flashing
+//since the tables in the db columns values will be set, you need the upadate fxns here
 const adminHomepageNews = async function (req, res) {
   const newsText = req.body.newsText;
 
@@ -231,11 +238,8 @@ const adminHomepageNews = async function (req, res) {
   }
 };
 
-//admin Homepage crud below ,it will display before crud
-
-// delete big image, delete news , upadate news, delete testimonials, update testimonial
-
 //delete big image
+//since the tables in the db columns values will be set, you need the upadate fxns here
 const deleteHomeBigImage = async function (req, res) {
   const value = req.params.id;
   try {
@@ -260,6 +264,7 @@ const deleteHomeBigImage = async function (req, res) {
 };
 
 //delete news
+//since the tables in the db columns values will be set, you need the upadate fxns here
 
 const deleteNews = async function (req, res) {
   const value = req.params.id;
@@ -285,6 +290,7 @@ const deleteNews = async function (req, res) {
 };
 
 //delete testimonials
+//since the tables in the db columns values will be set, you need the upadate fxns here
 const deleteTestimonials = async function (req, res) {
   const value = req.params.id;
   try {
@@ -441,10 +447,61 @@ const updateTestimonial = async function (req, res) {
 };
 
 /**            ABOUT  */
+const aboutpageGet = async function (req, res) {
+  const abouttext = req.body.abouttext;
+
+  try {
+    const abouttextGet = await aboutPageModel.findByPk(1);
+    res.send(abouttextGet);
+  } catch (err) {
+    console.log(err);
+  }
+};
+const aboutPageUpdate = async function (req, res) {
+  const abouttext = req.body.abouttext;
+
+  try {
+    const aboutUpdate = await aboutPageModel.update(
+      {
+        abouttext: abouttext,
+      },
+      {
+        where: {
+          id: 1,
+        },
+      }
+    );
+    aboutUpdate;
+  } catch (err) {
+    console.log(err);
+  }
+};
 
 /**            ABOUT */
 
 /**            CONTACT */
+
+//contactinfo get
+const contactGet = async function (res, req) {
+  try {
+    const contactinfoGet = await contactPageModel.findAll();
+    res.send(contactinfoGet);
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+//contact info delete
+const contactDelete = async function (req, res) {
+  const value = req.params.id;
+
+  try {
+    const contactInfoDelete = await contactPageModel.destroy(value);
+    contactInfoDelete;
+  } catch (err) {
+    console.log(err);
+  }
+};
 
 /**            CONTACT */
 
@@ -457,6 +514,9 @@ const getHomePage = async function (req, res) {
 
     const testimonials = await homePageTestimonialModel.findAll();
     const news = await homePageNewsModel.findAll();
+
+    const li = document.createElement("li");
+    li.innerHTML = `${bigImages}`;
     res.send(bigImages, testimonials, news, allTrackingInfo);
   } catch (err) {
     console.log(err);
@@ -482,4 +542,8 @@ export {
   deleteTestimonials,
   updateNews,
   updateTestimonial,
+  aboutpageGet,
+  aboutPageUpdate,
+  contactGet,
+  contactDelete,
 };

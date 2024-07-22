@@ -13,6 +13,10 @@ import { dirname } from "path";
 import * as assert from "uvu/assert";
 
 import { userTrackrouter } from "./routes/AdminPageRouter.js";
+import { aboutpageGetter } from "./routes/aboutpageRouter.js";
+import { UserContactPostRouter } from "./routes/contactpageRouter.js";
+import { homeUserRouter } from "./routes/homepageRouter.js";
+import { userTrackRouter } from "./routes/trackingpageRouter.js";
 const app = express();
 
 app.use(express.static("public"));
@@ -21,6 +25,10 @@ app.use(bodyParser.json());
 app.use(cors());
 
 app.use("/admin", userTrackrouter);
+app.use("/about", aboutpageGetter);
+app.use("/contact", UserContactPostRouter);
+app.use("/home", homeUserRouter);
+app.use("/track", userTrackRouter);
 //creating connection
 
 test.run();
